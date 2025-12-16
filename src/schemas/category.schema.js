@@ -15,4 +15,5 @@ categorySchema.virtual('products', {
     localField: '_id',
     foreignField: 'category'
 })
+
 export default model('Category', categorySchema)

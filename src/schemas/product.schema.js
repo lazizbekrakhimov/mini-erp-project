@@ -25,11 +25,10 @@ const productSchema = new Schema({
     versionKey: false
 });
 
-productSchema.pre('save', function (next) {
+productSchema.pre('save', function () {
     if (!this.sku) {
         this.sku = generateSKU(this._id);
     }
-    next();
 });
 
 export default model("Product", productSchema);
