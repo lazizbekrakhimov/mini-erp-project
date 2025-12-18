@@ -17,9 +17,10 @@ const stockSchema = new Schema({
         trim: true,
     },
 }, {
-    timestamps: true,
-    updatedAt: "updated_at",
-    createdAt: false,
+    timestamps: {
+        updatedAt: "updated_at",
+        createdAt: false,
+    },
     versionKey: false
 }
 );
