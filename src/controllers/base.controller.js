@@ -56,4 +56,13 @@ export class BaseController {
             throw new ApiError(`${message} already exists`, 409);
         }
     }
+
+    _success(res, data, status = 200) {
+        return successRes(res, data, status);
+    }
+
+    _wrap(fn) {
+        return catchAsync(fn);
+    }
+
 }
