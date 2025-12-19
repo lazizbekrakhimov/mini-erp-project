@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import product from "../controllers/product.controller.js";
 import { validator } from "../middlewares/validation-handler.js";
 import productValid from '../validations/product.validation.js'
