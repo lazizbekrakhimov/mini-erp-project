@@ -1,18 +1,17 @@
 import { Router } from "express";
 
 import customerController from "../controllers/customer.controller.js";
-import authMiddleware from "../middlewares/auth.middleware.js"; /// bu to'liq emas
-import roleMiddleware from "../middlewares/role.middleware.js"; /// bu ham to'liq emas
-import { Roles } from "../enums/const-roles.js";
+import { validator } from "../middlewares/validation-handler.js";
+import customerValidation from "../validations/customer.validation.js";
 
-const router = Router(); router.use(authMiddleware);
+const router = Router();
 
-router.post("/", roleMiddleware([Roles.ADMIN, Roles.MANAGER]), customerController.create);  
+router.post("/", validator(customerValidation.create), customerController.create);  
 router.get("/", customerController.findAll);  
 router.get("/:id", customerController.findOne);  
-router.put("/:id", roleMiddleware([Roles.ADMIN, Roles.MANAGER]), customerController.update);  
-router.delete("/:id", roleMiddleware([Roles.ADMIN]), customerController.remove);  
-router.patch("/:id/block", roleMiddleware([Roles.ADMIN]), customerController.block);  
-router.patch("/:id/activate", roleMiddleware([Roles.ADMIN]), customerController.activate);
+router.patch("/:id", validator(customerValidation.update), customerController.update);  
+router.delete("/:id", customerController.remove);  
+router.patch("/:id/block", customerController.block);  
+router.patch("/:id/activate", customerController.activate);
 
 export default router;

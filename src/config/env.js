@@ -21,7 +21,5 @@ export const envConfig = {
         PORT: Number(process.env.MAIL_PORT),
         USER: String(process.env.MAIL_USER),
         PASS: String(process.env.MAIL_PASS)
-    },
-    JWT_SECRET: String(process.env.JWT_SECRET),
-    JWT_EXPIRES_IN: String(process.env.JWT_EXPIRES_IN)
+    }
 }

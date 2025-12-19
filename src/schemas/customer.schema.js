@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import {CUSTOMER_STATUS} from "../enums/customer-status.js";
+
 const customerSchema = new Schema({
     firstName: { 
         type: String, 
