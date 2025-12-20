@@ -15,7 +15,7 @@ router.use("/products", productRouter);
 router.use("/admin", adminRouter);
 router.use("/stock", stockRouter);
 router.use("/supplier", supplierRouter);
-router.use("/customer", customerRouter);
-router.use("/sale", saleRouter);
+router.use("/customers", customerRouter);
+router.use("/sales", saleRouter);
 
 export default router

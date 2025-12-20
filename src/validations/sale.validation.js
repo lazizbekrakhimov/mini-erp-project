@@ -7,45 +7,27 @@ class SaleValidator {
     return value;
   }
 
-  // Sale
+  // Sale yaratish validator
   create = (data) => {
     const schema = Joi.object({
       customer_id: Joi.string().custom(this.objectId, "ObjectId Validation").required(),
-      items: Joi.array().items(
-        Joi.object({
-          product_id: Joi.string().custom(this.objectId, "ObjectId Validation").required(),
-          quantity: Joi.number().integer().min(1).required(),
-          price: Joi.number().precision(2).min(0).required(),
-        })
-      ).min(1).required(),
-      paid_amount: Joi.number().precision(2).min(0).default(0),
+      created_by: Joi.string().custom(this.objectId, "ObjectId Validation").required(),
+      total_amount: Joi.number().precision(2).min(0).required(),
+      paid_amount: Joi.number().precision(2).min(0).required(),
+      due_amount: Joi.number().precision(2).min(0).required(),
+      status: Joi.string().valid("UNPAID", "PARTIAL", "PAID", "CANCELLED").required(),
+      is_locked: Joi.boolean().optional().default(false)
     });
     return schema.validate(data);
   }
 
   update = (data) => {
     const schema = Joi.object({
-      status: Joi.string().valid("UNPAID", "PARTIAL", "PAID", "CANCELLED").optional(),
+      total_amount: Joi.number().precision(2).min(0).optional(),
       paid_amount: Joi.number().precision(2).min(0).optional(),
-    });
-    return schema.validate(data);
-  }
-
-  // SaleItem
-  createItem = (data) => {
-    const schema = Joi.object({
-      sale_id: Joi.string().custom(this.objectId, "ObjectId Validation").required(),
-      product_id: Joi.string().custom(this.objectId, "ObjectId Validation").required(),
-      quantity: Joi.number().integer().min(1).required(),
-      price: Joi.number().precision(2).min(0).required(),
-    });
-    return schema.validate(data);
-  }
-
-  updateItem = (data) => {
-    const schema = Joi.object({
-      quantity: Joi.number().integer().min(1).optional(),
-      price: Joi.number().precision(2).min(0).optional(),
+      due_amount: Joi.number().precision(2).min(0).optional(),
+      status: Joi.string().valid("UNPAID", "PARTIAL", "PAID", "CANCELLED").optional(),
+      is_locked: Joi.boolean().optional()
     });
     return schema.validate(data);
   }

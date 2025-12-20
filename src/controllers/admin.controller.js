@@ -17,7 +17,6 @@ class AdminController extends BaseController {
         delete req.body?.password;
         const newAdmin = await Admin.create({
             hashedPassword,
-            role: Roles.ADMIN,
             ...req.body
         });
         return successRes(res, newAdmin, 201);
@@ -48,8 +47,7 @@ class AdminController extends BaseController {
             id,
             {
                 ...req.body,
-                hashedPassword,
-                role: Roles.ADMIN
+                hashedPassword
             },
             { new: true }
         );

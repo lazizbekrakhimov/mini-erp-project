@@ -1,4 +1,5 @@
-import Joi from "joi";  
+import Joi from "joi";
+import { Roles } from "../enums/const-roles.js";
 
 class UserValidator {
     static phoneRegex = /^\+[1-9]\d{1,14}$/;
@@ -9,7 +10,10 @@ class UserValidator {
             fullName: Joi.string().optional(),
             phoneNumber: Joi.string().regex(UserValidator.phoneRegex).required(),
             email: Joi.string().email().required(),
-            password: Joi.string().regex(UserValidator.passwordRegex).required()
+            password: Joi.string().regex(UserValidator.passwordRegex).required(),
+            role: Joi.string().valid()
+                .valid(...Object.values(Roles))
+                .required()
         });
         return user.validate(data);
     }
@@ -41,7 +45,7 @@ class UserValidator {
         return user.validate(data);
     }
 
-    updatePassword(data){
+    updatePassword(data) {
         const user = Joi.object({
             oldPassword: Joi.string().optional(),
             newPassword: Joi.string().regex(UserValidator.passwordRegex).required(),
