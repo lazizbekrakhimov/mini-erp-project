@@ -1,8 +1,8 @@
-export const Roles = {
+export const Roles = Object.freeze({
   SUPERADMIN: 'SUPERADMIN',
   ADMIN: 'ADMIN',
   MANAGER: 'MANAGER',
   ACCOUNTANT: 'ACCOUNTANT',
   SALES: 'SALES',
   WAREHOUSE: 'WAREHOUSE'
-};
+});

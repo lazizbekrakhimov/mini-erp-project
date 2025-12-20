@@ -1,16 +1,17 @@
 import { Router } from "express";
-
-import category from "../controllers/category.controller.js";
+import controller from "../controllers/category.controller.js";
 import { validator } from "../middlewares/validation-handler.js";
-import categoryValid from "../validations/category.validation.js"
+import categoryValid from "../validations/category.validation.js";
+import { authGuard } from "../guards/auth-token.guard.js";
+import { roleGuard } from "../guards/role.guard.js";
+import { Roles } from "../enums/const-roles.js";
 
 const router = Router();
 
-router
-    .post("/", validator(categoryValid.create), category.create)
-    .get("/", category.findAll)
-    .get("/:id", category.findOne)
-    .patch("/:id", validator(categoryValid.update), category.update)
-    .delete("/:id", category.remove)
+router.post("/", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN, Roles.MANAGER), validator(categoryValid.create), controller.create);
+router.get("/", authGuard, controller.findAll);
+router.get("/:id", authGuard, controller.findOne);
+router.patch("/:id", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN, Roles.MANAGER), validator(categoryValid.update), controller.update);
+router.delete("/:id", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN), controller.remove);
 
-export default router
+export default router;

@@ -1,16 +1,17 @@
 import { Router } from "express";
-
-import stock from "../controllers/stock.controller.js";
+import controller from "../controllers/stock.controller.js";
 import { validator } from "../middlewares/validation-handler.js";
-import stockValid from "../validations/stock.validation.js"
+import stockValid from "../validations/stock.validation.js";
+import { authGuard } from "../guards/auth-token.guard.js";
+import { roleGuard } from "../guards/role.guard.js";
+import { Roles } from "../enums/const-roles.js";
 
 const router = Router();
 
-router
-    .post("/", validator(stockValid.create), stock.create)
-    .get("/", stock.findAll)
-    .get("/:id", stock.findOne)
-    .patch("/:id", validator(stockValid.update), stock.update)
-    .delete("/:id", stock.remove)
+router.post("/", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN, Roles.MANAGER, Roles.WAREHOUSE), validator(stockValid.create), controller.create);
+router.get("/", authGuard, controller.findAll);
+router.get("/:id", authGuard, controller.findOne);
+router.patch("/:id", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN, Roles.MANAGER, Roles.WAREHOUSE), validator(stockValid.update), controller.update);
+router.delete("/:id", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN), controller.remove);
 
-export default router
+export default router;
