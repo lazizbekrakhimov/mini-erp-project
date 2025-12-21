@@ -24,7 +24,8 @@ const customerSchema = new Schema({
     type: {
         type: String,
         enum: Object.values(PartnerType),
-        required: true },
+        required: true
+    },
     status: {
         type: String,
         enum: Object.values(PartnerStatus),

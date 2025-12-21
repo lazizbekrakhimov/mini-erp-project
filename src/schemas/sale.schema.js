@@ -22,14 +22,12 @@ const saleSchema = new Schema({
     toObject: { virtuals: true }
 });
 
-// Virtual for sale items
 saleSchema.virtual("items", {
     ref: "SaleItem",
     localField: "_id",
     foreignField: "sale"
 });
 
-// Pre-save: invoice_number, due_amount, status
 saleSchema.pre('save', async function() {
     if (!this.invoice_number) {
         const count = await this.constructor.countDocuments({

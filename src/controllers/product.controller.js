@@ -11,6 +11,7 @@ class ProductController extends BaseController {
         const product = await Product.create(req.body);
         return successRes(res, product, 201);
     });
+
     update = catchAsync(async (req, res) => {
         const id = req.params?.id;
         const product = await this._getById(id);

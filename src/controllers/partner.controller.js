@@ -60,7 +60,6 @@ class PartnerController extends BaseController {
         }
         return this._success(res, partner);
     });
-
     // DELETE PARTNER (faqat status uchun)
     remove = this._wrap(async (req, res) => {
         const partner = await this.model.findOneAndUpdate(
@@ -73,7 +72,6 @@ class PartnerController extends BaseController {
         }
         return this._success(res, partner);
     });
-
     // BLOCK PARTNER: bu partnerlarni block qilish uchun ishlatiladi
     block = this._wrap(async (req, res) => {
         const partner = await this.model.findOneAndUpdate(
@@ -89,7 +87,6 @@ class PartnerController extends BaseController {
         }
         return this._success(res, partner);
     });
-
     // ACTIVATE PARTNER: ya'ni block bo'lganlarni active qilish uchun ishlatiladi
     activate = this._wrap(async (req, res) => {
         const partner = await this.model.findOneAndUpdate(
@@ -102,7 +99,6 @@ class PartnerController extends BaseController {
         }
         return this._success(res, partner);
     });
-
     // INACTIVATE PARTNER: faol bo'lmagan partnerlarni inactive qilish uchun ishlatiladi
     inactivate = this._wrap(async (req, res) => {
         const partner = await this.model.findOneAndUpdate(

@@ -1,59 +1,63 @@
+import { BaseController } from "./base.controller.js";
 import { catchAsync } from "../middlewares/catch-async.js";
 import Purchase from "../schemas/purchase.schema.js";
 import PurchaseItem from "../schemas/purchase-item.schema.js";
-import { successRes } from "../utils/success-response.js";
 import { ApiError } from "../utils/custom-error.js";
 
-export class PurchaseController {
+class PurchaseController extends BaseController {
+    constructor() {
+        super(Purchase);
+    }
+
     create = catchAsync(async (req, res) => {
         const { items, ...purchaseData } = req.body;
-        const purchase = await Purchase.create(purchaseData);
-        if (items && items.length) {
-            const purchaseItems = items.map(i => ({ ...i, purchase: purchase._id }));
-            await PurchaseItem.insertMany(purchaseItems);
+        const purchase = await this.model.create(purchaseData);
+        if (items?.length) {
+            await this._syncItems(purchase._id, items);
         }
-        const result = await Purchase.findById(purchase._id);
-        return successRes(res, result, 201);
-    });
-
-    findAll = catchAsync(async (req, res) => {
-        const purchases = await Purchase.find();
-        return successRes(res, purchases);
-    });
-
-    findOne = catchAsync(async (req, res) => {
-        const id = req.params.id;
-        const purchase = await Purchase.findById(id);
-        if (!purchase) throw new ApiError("Purchase not found", 404);
-        return successRes(res, purchase);
+        const result = await this.model.findById(purchase._id);
+        return this._success(res, result, 201);
     });
 
     update = catchAsync(async (req, res) => {
         const id = req.params.id;
-        const purchase = await Purchase.findById(id);
-        if (!purchase) throw new ApiError("Purchase not found", 404);
-        if (purchase.is_locked) throw new ApiError("Purchase is locked", 403);
+        const purchase = await this._getUnlockedPurchase(id);
         const { items, ...updateData } = req.body;
         Object.assign(purchase, updateData);
         await purchase.save();
-        if (items && items.length) {
-            await PurchaseItem.deleteMany({ purchase: purchase._id });
-            const purchaseItems = items.map(i => ({ ...i, purchase: purchase._id }));
-            await PurchaseItem.insertMany(purchaseItems);
+        if (items) {
+            await this._syncItems(purchase._id, items, true);
         }
-        const result = await Purchase.findById(purchase._id);
-        return successRes(res, result);
+        const result = await this.model.findById(purchase._id);
+        return this._success(res, result);
     });
 
     remove = catchAsync(async (req, res) => {
         const id = req.params.id;
-        const purchase = await Purchase.findById(id);
-        if (!purchase) throw new ApiError("Purchase not found", 404);
-        if (purchase.is_locked) throw new ApiError("Purchase is locked", 403);
+        const purchase = await this._getUnlockedPurchase(id);
         await PurchaseItem.deleteMany({ purchase: purchase._id });
         await purchase.deleteOne();
-        return successRes(res, {});
+        return this._success(res, {});
     });
+
+    async _getUnlockedPurchase(id) {
+        const purchase = await this._getById(id);
+        if (purchase.is_locked) {
+            throw new ApiError("Purchase is locked", 403);
+        }
+        return purchase;
+    }
+
+    async _syncItems(purchaseId, items, replace = false) {
+        if (replace) {
+            await PurchaseItem.deleteMany({ purchase: purchaseId });
+        }
+        const purchaseItems = items.map(i => ({
+            ...i,
+            purchase: purchaseId
+        }));
+        await PurchaseItem.insertMany(purchaseItems);
+    }
 }
 
 export default new PurchaseController();
