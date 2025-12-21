@@ -1,5 +1,6 @@
 import Joi from "joi";
-import { CUSTOMER_STATUS } from "../enums/customer-status.js";
+import { PartnerStatus } from "../enums/partner-status.js";
+import { PartnerType } from "../enums/partner-type.js";
 
 class CustomerValidator {
     create(data) {
@@ -8,8 +9,11 @@ class CustomerValidator {
             last_name: Joi.string().min(2).max(50).optional(),
             phoneNumber: Joi.string().min(7).max(20).required(),
             email: Joi.string().email().lowercase().optional(),
+            type: Joi.string()
+                .valid(...Object.values(PartnerType))
+                .required(),
             status: Joi.string()
-                .valid(...Object.values(CUSTOMER_STATUS))
+                .valid(...Object.values(PartnerStatus))
                 .optional()
         });
 
@@ -22,8 +26,11 @@ class CustomerValidator {
             last_name: Joi.string().min(2).max(50).optional(),
             phoneNumber: Joi.string().min(7).max(20).optional(),
             email: Joi.string().email().lowercase().optional(),
+            type: Joi.string()
+                .valid(...Object.values(PartnerType))
+                .required(),
             status: Joi.string()
-                .valid(...Object.values(CUSTOMER_STATUS))
+                .valid(...Object.values(PartnerStatus))
                 .optional()
         });
 

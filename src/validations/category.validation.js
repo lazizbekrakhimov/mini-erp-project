@@ -1,21 +1,23 @@
 import Joi from "joi";
 
-class CategoryValidator{
+class CategoryValidator {
     create(data) {
-        const category = Joi.object({
+        const schema = Joi.object({
             name: Joi.string().min(3).required(),
-            description: Joi.string().optional()
-        })
-        return category.validate(data);
+            description: Joi.string().optional(),
+            parent_id: Joi.string().optional().allow(null)
+        });
+        return schema.validate(data);
     }
 
     update(data) {
-        const category = Joi.object({
+        const schema = Joi.object({
             name: Joi.string().min(3).optional(),
-            description: Joi.string().optional()
-        })
-        return category.validate(data);
+            description: Joi.string().optional(),
+            parent_id: Joi.string().optional().allow(null)
+        });
+        return schema.validate(data);
     }
 }
 
-export default new CategoryValidator()
+export default new CategoryValidator();

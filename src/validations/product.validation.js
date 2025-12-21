@@ -1,25 +1,29 @@
 import Joi from "joi";
 
-class ProductValidator{
+class ProductValidator {
     create(data) {
-        const product = Joi.object({
+        const schema = Joi.object({
             name: Joi.string().min(3).required(),
-            sku: Joi.string().optional(),
-            price: Joi.number().min(0).required(),
-            category: Joi.string().hex().length(24).required()
-        })
-        return product.validate(data);
+            sku: Joi.string().min(3).optional(),
+            sale_price: Joi.number().required(),
+            cost_price: Joi.number().required(),
+            category: Joi.string().required(),
+            is_active: Joi.boolean().optional()
+        });
+        return schema.validate(data);
     }
 
     update(data) {
-        const product = Joi.object({
+        const schema = Joi.object({
             name: Joi.string().min(3).optional(),
-            sku: Joi.string().optional(),
-            price: Joi.number().min(0).required(),
-            category: Joi.string().hex().length(24).required()
-        })
-        return product.validate(data);
+            sku: Joi.string().min(3).optional(),
+            sale_price: Joi.number().optional(),
+            cost_price: Joi.number().optional(),
+            category: Joi.string().optional(),
+            is_active: Joi.boolean().optional()
+        });
+        return schema.validate(data);
     }
 }
 
-export default new ProductValidator()
+export default new ProductValidator();

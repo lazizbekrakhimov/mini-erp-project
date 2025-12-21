@@ -1,4 +1,4 @@
-export const CUSTOMER_STATUS = Object.freeze({
+export const PartnerStatus = Object.freeze({
     ACTIVE: "active",
     INACTIVE: "inactive",
     BLOCKED: "blocked",

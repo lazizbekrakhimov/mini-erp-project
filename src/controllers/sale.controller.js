@@ -1,46 +1,77 @@
-import Sale from "../schemas/sale.schema.js";
 import { BaseController } from "./base.controller.js";
-import { ApiError } from "../utils/custom-error.js";
+import { catchAsync } from "../middlewares/catch-async.js";
+import Sale from "../schemas/sale.schema.js";
+import SaleItem from "../schemas/sale-item.schema.js";
 import { successRes } from "../utils/success-response.js";
+import { ApiError } from "../utils/custom-error.js";
 
 export class SaleController extends BaseController {
-    constructor() {
-        super(Sale, "customer_id");
-    }
+    create = catchAsync(async (req, res) => {
+        const { items, ...saleData } = req.body;
+        const sale = await Sale.create(saleData);
 
-    create = this._wrap(async (req, res) => {
-        const { customer_id, created_by, total_amount, paid_amount, due_amount, status, is_locked = false } = req.body;
-
-        const sale = await Sale.create({
-            customer_id,
-            created_by,
-            total_amount,
-            paid_amount,
-            due_amount,
-            status,
-            is_locked
-        });
-
-        return successRes(res, sale, 201);
-    });
-
-    update = this._wrap(async (req, res) => {
-        const sale = await this._getById(req.params.id);
-
-        if (sale.is_locked) throw new ApiError("Cannot update locked sale", 403);
-
-        if (req.body.paid_amount !== undefined) {
-            req.body.due_amount = (req.body.total_amount || sale.total_amount) - req.body.paid_amount;
-            req.body.status = req.body.paid_amount === 0
-                ? "UNPAID"
-                : req.body.due_amount === 0
-                    ? "PAID"
-                    : "PARTIAL";
+        if (items && items.length) {
+            const saleItems = items.map(i => ({ ...i, sale: sale._id }));
+            await SaleItem.insertMany(saleItems);
         }
 
-        const updatedData = await this.model.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        return successRes(res, updatedData);
+        const result = await Sale.findById(sale._id)
+            .populate("customer")
+            .populate("items");
+        return successRes(res, result, 201);
     });
+
+    findAll = catchAsync(async (req, res) => {
+        const sales = await Sale.find()
+            .populate("customer")
+            .populate("items");
+        return successRes(res, sales);
+    });
+
+    findOne = catchAsync(async (req, res) => {
+        const id = req.params.id;
+        const sale = await Sale.findById(id)
+            .populate("customer")
+            .populate("items");
+        if (!sale) throw new ApiError("Sale not found", 404);
+        return successRes(res, sale);
+    });
+
+    update = catchAsync(async (req, res) => {
+        const id = req.params.id;
+        const sale = await Sale.findById(id);
+        if (!sale) throw new ApiError("Sale not found", 404);
+        if (sale.is_locked) throw new ApiError("Sale is locked", 403);
+
+        const { items, ...updateData } = req.body;
+        Object.assign(sale, updateData);
+        await sale.save();
+
+        if (items && items.length) {
+            await SaleItem.deleteMany({ sale: sale._id });
+            const saleItems = items.map(i => ({ ...i, sale: sale._id }));
+            await SaleItem.insertMany(saleItems);
+        }
+
+        const result = await Sale.findById(sale._id)
+            .populate("customer")
+            .populate("items");
+        return successRes(res, result);
+    });
+
+    remove = catchAsync(async (req, res) => {
+        const id = req.params.id;
+        const sale = await Sale.findById(id);
+        if (!sale) throw new ApiError("Sale not found", 404);
+        if (sale.is_locked) throw new ApiError("Sale is locked", 403);
+
+        // Sale items ni o'chirish
+        await SaleItem.deleteMany({ sale: sale._id });
+        // Sale ni o'chirish (deleteOne bilan)
+        await sale.deleteOne();
+        return successRes(res, { message: "Sale deleted successfully" });
+    });
+
 }
 
-export default new SaleController();
+export default new SaleController(Sale, "items");
