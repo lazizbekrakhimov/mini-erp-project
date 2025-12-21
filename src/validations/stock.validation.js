@@ -1,7 +1,7 @@
 import Joi from "joi";
 
-class StockValidator{
-    create(data){
+class StockValidator {
+    create(data) {
         const stock = Joi.object({
             product_id: Joi.string().required(),
             quantity: Joi.number().integer().min(0).required(),
@@ -10,7 +10,7 @@ class StockValidator{
         return stock.validate(data)
     }
 
-    update(data){
+    update(data) {
         const stock = Joi.object({
             quantity: Joi.number().integer().min(0).optional(),
             warehouse: Joi.string().optional()

@@ -9,12 +9,10 @@ export class SaleController extends BaseController {
     create = catchAsync(async (req, res) => {
         const { items, ...saleData } = req.body;
         const sale = await Sale.create(saleData);
-
         if (items && items.length) {
             const saleItems = items.map(i => ({ ...i, sale: sale._id }));
             await SaleItem.insertMany(saleItems);
         }
-
         const result = await Sale.findById(sale._id)
             .populate("customer")
             .populate("items");
@@ -42,17 +40,14 @@ export class SaleController extends BaseController {
         const sale = await Sale.findById(id);
         if (!sale) throw new ApiError("Sale not found", 404);
         if (sale.is_locked) throw new ApiError("Sale is locked", 403);
-
         const { items, ...updateData } = req.body;
         Object.assign(sale, updateData);
         await sale.save();
-
         if (items && items.length) {
             await SaleItem.deleteMany({ sale: sale._id });
             const saleItems = items.map(i => ({ ...i, sale: sale._id }));
             await SaleItem.insertMany(saleItems);
         }
-
         const result = await Sale.findById(sale._id)
             .populate("customer")
             .populate("items");
@@ -64,12 +59,11 @@ export class SaleController extends BaseController {
         const sale = await Sale.findById(id);
         if (!sale) throw new ApiError("Sale not found", 404);
         if (sale.is_locked) throw new ApiError("Sale is locked", 403);
-
         // Sale items ni o'chirish
         await SaleItem.deleteMany({ sale: sale._id });
         // Sale ni o'chirish (deleteOne bilan)
         await sale.deleteOne();
-        return successRes(res, { message: "Sale deleted successfully" });
+        return successRes(res, {});
     });
 
 }

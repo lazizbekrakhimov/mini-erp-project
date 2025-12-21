@@ -1,5 +1,5 @@
 export const PaymentStatus = Object.freeze({
-    UNPAID: 'UNPAID',
+    UNPAID: 'unpaid',
     PARTIAL: 'partial',
     PAID: 'paid',
     CANCELLED: 'cancelled'
