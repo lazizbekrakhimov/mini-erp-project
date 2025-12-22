@@ -13,5 +13,7 @@ router.get("/", authGuard, controller.findAll);
 router.get("/:id", authGuard, controller.findOne);
 router.patch("/:id", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN, Roles.MANAGER), validator(purchaseValid.update), controller.update);
 router.delete("/:id", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN), controller.remove);
+router.patch("/:id/lock", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN, Roles.MANAGER), controller.lock);
+router.patch("/:id/unlock", authGuard, roleGuard(Roles.SUPERADMIN, Roles.ADMIN, Roles.MANAGER), controller.unlock);
 
 export default router;

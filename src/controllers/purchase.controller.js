@@ -58,6 +58,31 @@ class PurchaseController extends BaseController {
         }));
         await PurchaseItem.insertMany(purchaseItems);
     }
+
+    lock = this._wrap(async (req, res) => {
+        const sale = await this.model.findOneAndUpdate(
+            { _id: req.params.id },
+            { is_locked: true },
+            { new: true }
+        );
+        if (!sale) {
+            throw new ApiError("Purchase not found", 404);
+        }
+        return this._success(res, sale);
+    });
+
+    unlock = this._wrap(async (req, res) => {
+        const sale = await this.model.findOneAndUpdate(
+            { _id: req.params.id },
+            { is_locked: false },
+            { new: true }
+        );
+        if (!sale) {
+            throw new ApiError("Purchase not found", 404);
+        }
+        return this._success(res, sale);
+    });
+    
 }
 
 export default new PurchaseController();
