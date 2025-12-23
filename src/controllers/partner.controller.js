@@ -27,8 +27,7 @@ class PartnerController extends BaseController {
     });
 
     findAll = this._wrap(async (_req, res) => {
-        const data = await this.model.find({
-        });
+        const data = await this.model.find({});
         return this._success(res, data);
     });
 
@@ -56,7 +55,7 @@ class PartnerController extends BaseController {
             { new: true }
         );
         if (!partner) {
-            throw new ApiError("partner not found", 404);
+            throw new ApiError("Partner not found", 404);
         }
         return this._success(res, partner);
     });
@@ -68,11 +67,11 @@ class PartnerController extends BaseController {
             { new: true }
         );
         if (!partner) {
-            throw new ApiError("partner not found", 404);
+            throw new ApiError("Partner not found", 404);
         }
         return this._success(res, partner);
     });
-    // BLOCK PARTNER: bu partnerlarni block qilish uchun ishlatiladi
+    // BLOCK PARTNER: bu Partnerlarni block qilish uchun ishlatiladi
     block = this._wrap(async (req, res) => {
         const partner = await this.model.findOneAndUpdate(
             {
@@ -99,7 +98,7 @@ class PartnerController extends BaseController {
         }
         return this._success(res, partner);
     });
-    // INACTIVATE PARTNER: faol bo'lmagan partnerlarni inactive qilish uchun ishlatiladi
+    // INACTIVATE PARTNER: faol bo'lmagan Partnerlarni inactive qilish uchun ishlatiladi
     inactivate = this._wrap(async (req, res) => {
         const partner = await this.model.findOneAndUpdate(
             {
